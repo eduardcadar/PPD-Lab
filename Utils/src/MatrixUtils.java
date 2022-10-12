@@ -14,6 +14,7 @@ public class MatrixUtils {
     }
 
     public static void PrintMatrix(Double[][] matrix) {
+        System.out.println(matrix.length + " " + matrix[0].length);
         for (Double[] line : matrix) {
             for (Double element : line) {
                 System.out.print(element + " ");
