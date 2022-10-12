@@ -8,6 +8,7 @@ public class Lab1Main {
 
         Secvential secventialSolver = new Secvential();
         Double[][] borderedMatrix = MatrixUtils.AddBorderToMatrix(matrix);
+
         Instant start = Instant.now();
         secventialSolver.Solve(borderedMatrix, windowMatrix);
         Instant finish = Instant.now();

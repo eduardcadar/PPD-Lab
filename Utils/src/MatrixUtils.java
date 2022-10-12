@@ -12,4 +12,13 @@ public class MatrixUtils {
         }
         return borderedMatrix;
     }
+
+    public static void PrintMatrix(Double[][] matrix) {
+        for (Double[] line : matrix) {
+            for (Double element : line) {
+                System.out.print(element + " ");
+            }
+            System.out.println();
+        }
+    }
 }

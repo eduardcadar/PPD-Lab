@@ -3,8 +3,8 @@ import java.util.*;
 
 public class FileUtils {
     public static boolean CompareFiles(String filePath1, String filePath2) {
-        List<String> fileText1 = ReadFileAsStringList(filePath1);
-        List<String> fileText2 = ReadFileAsStringList(filePath2);
+        String fileText1 = ReadFileAsString(filePath1);
+        String fileText2 = ReadFileAsString(filePath2);
         return Objects.equals(fileText1, fileText2);
     }
 

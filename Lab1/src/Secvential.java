@@ -13,11 +13,6 @@ public class Secvential {
             }
         }
 
-        for (Double[] line : outputMatrix) {
-            for (Double element : line) {
-                System.out.print(element + " ");
-            }
-            System.out.println();
-        }
+        MatrixUtils.PrintMatrix(outputMatrix);
     }
 }
