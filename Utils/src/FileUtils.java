@@ -30,7 +30,7 @@ public class FileUtils {
             }
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
-            return null;
+            return new Double[0][0];
         }
         return matrix;
     }
@@ -98,13 +98,12 @@ public class FileUtils {
         }
         Random rand = new Random();
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write(N);
-            fileWriter.write(M);
+            fileWriter.write(N + " " + M + System.lineSeparator());
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     switch (elementType) {
                         case INT -> fileWriter.write(rand.nextInt(upperbound) + " ");
-                        case FLOAT -> fileWriter.write(rand.nextFloat() * upperbound + " ");
+                        case DOUBLE -> fileWriter.write(rand.nextDouble() * upperbound + " ");
                     }
                 }
                 fileWriter.write(System.lineSeparator());
@@ -126,7 +125,7 @@ public class FileUtils {
             for (int i = 0; i < noOfElements; i++) {
                 switch (elementType) {
                     case INT -> fileWriter.write(rand.nextInt(upperbound) + " ");
-                    case FLOAT -> fileWriter.write(rand.nextFloat() * upperbound + " ");
+                    case DOUBLE -> fileWriter.write(rand.nextFloat() * upperbound + " ");
                 }
             }
         } catch (IOException e) {

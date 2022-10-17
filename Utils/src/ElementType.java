@@ -1,3 +1,3 @@
 public enum ElementType {
-    INT, FLOAT;
+    INT, DOUBLE;
 }

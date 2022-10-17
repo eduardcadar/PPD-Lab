@@ -13,6 +13,15 @@ public class MatrixUtils {
         return borderedMatrix;
     }
 
+    public static boolean SameElements(Double[][] matrix1, Double[][] matrix2) {
+        if (matrix1.length != matrix2.length)
+            return false;
+        for (int i = 0; i < matrix1.length; i++)
+            if (!ArrayUtils.SameElements(matrix1[i], matrix2[i]))
+                return false;
+        return true;
+    }
+
     public static void PrintMatrix(Double[][] matrix) {
         System.out.println(matrix.length + " " + matrix[0].length);
         for (Double[] line : matrix) {
