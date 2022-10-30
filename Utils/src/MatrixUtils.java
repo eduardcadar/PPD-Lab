@@ -13,7 +13,7 @@ public class MatrixUtils {
         return borderedMatrix;
     }
 
-    public static boolean SameElements(Double[][] matrix1, Double[][] matrix2) {
+    public static boolean SameElements(double[][] matrix1, double[][] matrix2) {
         if (matrix1.length != matrix2.length)
             return false;
         for (int i = 0; i < matrix1.length; i++)

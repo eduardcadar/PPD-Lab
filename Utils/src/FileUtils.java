@@ -16,12 +16,12 @@ public class FileUtils {
                 .toList();
     }
 
-    public static Double[][] ReadFileAsMatrix(String filePath) {
-        Double[][] matrix;
+    public static double[][] ReadFileAsMatrix(String filePath) {
+        double[][] matrix;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String[] lineElements = br.readLine().split(" ");
             int N = Integer.parseInt(lineElements[0]), M = Integer.parseInt(lineElements[1]);
-            matrix = new Double[N][M];
+            matrix = new double[N][M];
             for (int i = 0; i < N; i++) {
                 lineElements = br.readLine().split(" ");
                 for (int j = 0; j < M; j++) {
@@ -30,7 +30,7 @@ public class FileUtils {
             }
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
-            return new Double[0][0];
+            return new double[0][0];
         }
         return matrix;
     }
@@ -66,6 +66,17 @@ public class FileUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static void WriteMatrixToFile(String filePath, double[][] matrix) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(matrix.length).append(" ").append(matrix[0].length).append(System.lineSeparator());
+        for (double[] line : matrix) {
+            for (int j = 0; j < matrix[0].length; j++)
+                sb.append(line[j]).append(" ");
+            sb.append(System.lineSeparator());
+        }
+        WriteToFile(filePath, sb.toString());
     }
 
     public static void WriteToFile(String filePath, String text) {

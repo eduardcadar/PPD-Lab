@@ -1,21 +1,11 @@
 public class Parallel {
-    public Double[][] Solve(Double[][] inpMatrix, Double[][] inpWindowMatrix, int no_threads) {
-        double[][] outputMatrix = new double[inpMatrix.length][inpMatrix[0].length];
-        double[][] matrix = new double[inpMatrix.length][inpMatrix[0].length];
-        double[][] windowMatrix = new double[inpWindowMatrix.length][inpWindowMatrix[0].length];
-        for (int i = 0; i < inpMatrix.length; i++)
-            for (int j = 0; j < inpMatrix[i].length; j++) {
-                matrix[i][j] = inpMatrix[i][j];
-            }
-        for (int i = 0; i < windowMatrix.length; i++)
-            for (int j = 0; j < windowMatrix[i].length; j++) {
-                windowMatrix[i][j] = inpWindowMatrix[i][j];
-            }
+    public double[][] Solve(double[][] matrix, double[][] windowMatrix, int no_threads) {
+        double[][] outputMatrix = new double[matrix.length][matrix[0].length];
 
         Thread[] p = new Thread[no_threads];
         int start, end, r;
         start = 0;
-        int size = inpMatrix.length;
+        int size = matrix.length;
         end = size / no_threads;
         r = size % no_threads;
         for (int i = 0; i < no_threads; i++) {
@@ -35,11 +25,7 @@ public class Parallel {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        Double[][] returnMatrix = new Double[outputMatrix.length][outputMatrix[0].length];
-        for (int i = 0; i < inpMatrix.length; i++)
-            for (int j = 0; j < inpMatrix[i].length; j++)
-                returnMatrix[i][j] = outputMatrix[i][j];
-        return returnMatrix;
+        return outputMatrix;
     }
 
     private static class MyThread extends Thread {

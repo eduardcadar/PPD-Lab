@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Utils" exported="" />
+    <orderEntry type="library" exported="" name="Maven: org.openjdk.jmh:jmh-core:1.35" level="project" />
   </component>
 </module>
