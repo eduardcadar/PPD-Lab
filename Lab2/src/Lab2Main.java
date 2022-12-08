@@ -67,7 +67,8 @@ public class Lab2Main {
 
     private static class MyThread extends Thread {
         private final double[][] matrix, windowMatrix;
-        private final int first, last, M;
+        private final int first;
+        private final int last;
         private final static CyclicBarrier barrier = new CyclicBarrier(no_threads);
 
         private MyThread(double[][] matrix, double[][] windowMatrix, int start, int end) {
@@ -75,7 +76,6 @@ public class Lab2Main {
             this.windowMatrix = windowMatrix;
             this.first = start;
             this.last = end - 1;
-            M = matrix[0].length;
         }
 
         public void run() {
@@ -97,6 +97,7 @@ public class Lab2Main {
 
             try {
                 barrier.await();
+
                 int line = 0;
                 for (int i = first; i <= last - allocSize; i++) {
                     for (int j = 0; j < M; j++) {

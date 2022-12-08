@@ -1,13 +1,11 @@
 $javaFile = $args[0] # Nume fisier java
-#Write-Host $param1
 
-$matrixNumber = $args[1]
+$noRuns = $args[1] # No of runs
 
-$noThreads = $args[2] # No of threads
-#Write-Host $param2
+$caz = $args[2]
 
-#$noRuns = $args[3] # No of runs
-$noRuns = 10
+$noThreads = $args[3] # No of threads
+
 
 # Executare class Java
 
@@ -15,7 +13,7 @@ $suma = 0
 
 for ($i = 0; $i -lt $noRuns; $i++){
     Write-Host "Rulare" ($i+1)
-    $a = java $javaFile $matrixNumber $noThreads # rulare class java
+    $a = java $javaFile $caz $noThreads # rulare class java
     Write-Host $a
     $suma += $a
     Write-Host ""
@@ -28,8 +26,8 @@ Write-Host "Timp de executie mediu:" $media
 if (!(Test-Path outJ.csv)){
     New-Item outJ.csv -ItemType File
     #Scrie date in csv
-    Set-Content outJ.csv 'Tip Matrice,Nr threads,Timp executie'
+    Set-Content outJ.csv 'Caz,Nr threads,Timp executie'
 }
 
 # Append
-Add-Content outJ.csv "N=10000,M=10,n=m=5,$($noThreads),$($media)"
+Add-Content outJ.csv "nrPolinoame=5,nrMonoame=100,gr=10000,$($noThreads),$($media)"
