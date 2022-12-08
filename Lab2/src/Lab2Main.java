@@ -42,7 +42,7 @@ public class Lab2Main {
         Thread[] threads = new Thread[no_threads];
 
         int start = 0, end, r;
-        int size = matrix.length * matrix[0].length;
+        int size = matrix.length;
         end = size / no_threads;
         r = size % no_threads;
         for (int i = 0; i < no_threads; i++) {
@@ -67,7 +67,8 @@ public class Lab2Main {
 
     private static class MyThread extends Thread {
         private final double[][] matrix, windowMatrix;
-        private final int first, last, M;
+        private final int first;
+        private final int last;
         private final static CyclicBarrier barrier = new CyclicBarrier(no_threads);
 
         private MyThread(double[][] matrix, double[][] windowMatrix, int start, int end) {
@@ -75,90 +76,78 @@ public class Lab2Main {
             this.windowMatrix = windowMatrix;
             this.first = start;
             this.last = end - 1;
-            M = matrix[0].length;
         }
 
         public void run() {
-            int N = matrix.length;
-            int firstLine = first / M, firstCol = first % M;
-            int lastLine = last / M, lastCol = last % M;
-            int allocSize = windowMatrix.length / 2;
-            int i, j, allocLinesBefore = 0, allocLinesAfter = 0;
-            i = firstLine;
-            while (i > 0 && allocLinesBefore < allocSize) {
-                allocLinesBefore++;
-                i--;
-            }
-            i = lastLine;
-            while (i < N - 1 && allocLinesAfter < allocSize) {
-                allocLinesAfter++;
-                i++;
-            }
-
-            // copyMatrixLines - how many lines the copy matrix will have
-            // the line number of the last element minus the line number of the first element + 1
-            int copyMatrixLines = (last / M) - (first / M) + 1;
-            // copyMatrixColumns - how many columns the copy matrix will have
-            // max of the column number of the elements between start and end
-            int copyMatrixColumns;
-            int maxCol = Math.max(last % M + 1, first % M + 1);
-            if (copyMatrixLines > 1 || maxCol + allocSize > M)
-                copyMatrixColumns = M;
-            else
-                copyMatrixColumns = maxCol + allocSize;
-
-            copyMatrixLines += allocLinesBefore + allocLinesAfter;
-            double[][] matrixCopy = new double[copyMatrixLines][copyMatrixColumns];
-            int lineDifference = first / M - allocLinesBefore;
-
-            int a = firstLine - lineDifference - allocLinesBefore;
-            int b = lastLine - lineDifference + allocLinesAfter;
-            j = firstCol - allocSize;
-            int k = lastCol + allocSize;
-            while (j < 0) j++;
-            int firstCopyCol = j;
-            while (k > M - 1) k--;
-            if (firstLine == lastLine) {
-                for (i = a; i <= b; i++)
-                    for (j = firstCopyCol; j <= k; j++)
-                        matrixCopy[i][j] = matrix[i + lineDifference][j];
-            } else {
-                int firstCopy;
-                if (allocLinesBefore < allocSize)
-                    firstCopy = 0;
-                else
-                    firstCopy = a * M + j;
-                int lastCopy;
-                if (allocLinesAfter < allocSize)
-                    lastCopy = copyMatrixLines * copyMatrixColumns - 1;
-                else
-                    lastCopy = b * M + k;
-
-                for (i = firstCopy; i <= lastCopy; i++) {
-                    matrixCopy[i / M][i % M] = matrix[i / M + lineDifference][i % M];
-                }
-            }
+            int N = matrix.length, M = matrix[0].length;
+            int n = windowMatrix.length, m = windowMatrix[0].length;
+            int allocSize = n / 2;
+            double[][] borderBefore = new double[allocSize + 1][M];
+            double[][] borderAfter = new double[allocSize][M];
+            for (int i = 0; i < allocSize; i++)
+                if (first - allocSize + i >= 0)
+                    for (int j = 0; j < M; j++)
+                        borderBefore[i][j] = matrix[first - allocSize + i][j];
+            for (int j = 0; j < M; j++)
+                borderBefore[allocSize][j] = matrix[first][j];
+            for (int i = 0; i < allocSize; i++)
+                if (last + allocSize - i < N)
+                    for (int j = 0; j < M; j++)
+                        borderAfter[i][j] = matrix[last + 1 + i][j];
 
             try {
                 barrier.await();
 
-                for (i = first; i <= last; i++) {
-                    double output = 0;
-                    for (k = -windowMatrix.length / 2; k <= windowMatrix.length / 2; k++) {
-                        for (int l = -windowMatrix[0].length / 2; l <= windowMatrix[0].length / 2; l++) {
-                            a = (i / M) + k;
-                            a -= lineDifference;
-                            b = (i % M) + l;
-                            if (a < 0) a = 0;
-                            if (b < 0) b = 0;
-                            if (a >= matrixCopy.length) a = matrixCopy.length - 1;
-                            if (b >= matrixCopy[0].length) b = matrixCopy[0].length - 1;
+                int line = 0;
+                for (int i = first; i <= last - allocSize; i++) {
+                    for (int j = 0; j < M; j++) {
+                        double output = 0;
+                        for (int k = -n / 2; k <= n / 2; k++) {
+                            for (int l = -m / 2; l <= m / 2; l++) {
+                                int a = i + k;
+                                int b = j + l;
+                                if (a < 0) a = 0;
+                                if (b < 0) b = 0;
+                                if (a >= N) a = N - 1;
+                                if (b >= M) b = M - 1;
 
-                            output +=
-                                    matrixCopy[a][b] * windowMatrix[k + windowMatrix.length / 2][l + windowMatrix[0].length / 2];
+                                if (k <= 0)
+                                    output += borderBefore[(line + k + borderBefore.length) % borderBefore.length][b]
+                                            * windowMatrix[k + n / 2][l + m / 2];
+                                else
+                                    output += matrix[a][b]
+                                            * windowMatrix[k + n / 2][l + m / 2];
+                            }
+                        }
+                        for (int t = 0; t < M; t++)
+                            borderBefore[line][t] = matrix[i + 1][t];
+                        line++;
+                        line %= borderBefore.length;
+                        matrix[i][j] = output;
+                    }
+                }
+
+                for (int i = last - allocSize + 1; i <= last; i++) {
+                    for (int j = 0; j < M; j++) {
+                        double output = 0;
+                        for (int k = -n / 2; k <= n / 2; k++) {
+                            for (int l = -m / 2; l <= m / 2; l++) {
+                                int a = i + k;
+                                int b = j + l;
+                                if (a < 0) a = 0;
+                                if (b < 0) b = 0;
+                                if (a >= N) a = N - 1;
+                                if (b >= M) b = M - 1;
+
+                                if (k <= 0)
+                                    output += borderBefore[(line + k + borderBefore.length) % borderBefore.length][b]
+                                            * windowMatrix[k + n / 2][l + m / 2];
+                                else
+                                    output += matrix[a][b]
+                                            * windowMatrix[k + n / 2][l + m / 2];
+                            }
                         }
                     }
-                    matrix[i / M][i % M] = output;
                 }
             } catch (InterruptedException | BrokenBarrierException e) {
                 throw new RuntimeException(e);
