@@ -1,7 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,30 +31,20 @@ public class Lab5Main {
     };
 
     public static int noThreads = 4;
-    public static int noReaderThreads = 1;
-    public static String resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomBResult.txt";
-    public static String solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomBSolution.txt";
+    public static int noReaderThreads = 2;
+    public static String resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomAResult.txt";
+    public static String solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomASolution.txt";
 
     public static String[] inputFiles;
 
     public static void main(String[] args) {
-        inputFiles = inputFilesB;
+        String caseNumber = "A";
         if (args.length > 0) {
             if (args.length != 3) {
                 System.out.println("Give case number, number of threads and number of reader threads");
                 return;
             }
-            String caseNumber = args[0];
-            switch (caseNumber) {
-                case "A" -> inputFiles = inputFilesA;
-                case "B" -> inputFiles = inputFilesB;
-                default -> {
-                    System.out.println("Wrong case number (should be A or B)");
-                    return;
-                }
-            }
-            resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Result.txt";
-            solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Solution.txt";
+            caseNumber = args[0];
             noThreads = Integer.parseInt(args[1]);
             if (noThreads < 1) {
                 System.out.println("Wrong noThreads");
@@ -68,6 +56,16 @@ public class Lab5Main {
                 return;
             }
         }
+        switch (caseNumber) {
+            case "A" -> inputFiles = inputFilesA;
+            case "B" -> inputFiles = inputFilesB;
+            default -> {
+                System.out.println("Wrong case number (should be A or B)");
+                return;
+            }
+        }
+        resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Result.txt";
+        solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Solution.txt";
         if (noThreads > 1 && noReaderThreads >= noThreads) {
             System.out.println("noReaderThreads should be smaller than noThreads");
             return;
@@ -207,17 +205,9 @@ public class Lab5Main {
 
     public static class Node {
         public int coef;
-        public final Integer exp;
+        public int exp;
         public Node next;
-        ReentrantLock lock = new ReentrantLock();
-
-        public void lock() {
-            lock.lock();
-        }
-
-        public void unlock() {
-            lock.unlock();
-        }
+        final ReentrantLock lock = new ReentrantLock();
 
         public Node(int coef, int exp, Node node) {
             this.coef = coef;
@@ -247,20 +237,28 @@ public class Lab5Main {
 
         public void add(Node node) {
             Node prev = first;
+            prev.lock.lock();
             Node crt = first.next;
+            crt.lock.lock();
             while (crt != last && crt.exp < node.exp) {
+                crt.next.lock.lock();
+                prev.lock.unlock();
                 prev = crt;
                 crt = crt.next;
             }
-            if (crt.coef == node.coef) {
-                crt.coef += node.coef;
-                if (crt.coef == 0)
-                    prev.next = crt.next;
+            if (crt.exp > node.exp) {
+                node.next = crt;
+                prev.next = node;
             } else {
-                Node newNode = new Node(node.coef, node.exp);
-                prev.next = newNode;
-                newNode.next = crt;
+                crt.coef += node.coef;
+                if (crt.coef == 0) {
+                    crt.next.lock.lock();
+                    prev.next = crt.next;
+                    crt.next.lock.unlock();
+                }
             }
+            crt.lock.unlock();
+            prev.lock.unlock();
         }
 
         @Override

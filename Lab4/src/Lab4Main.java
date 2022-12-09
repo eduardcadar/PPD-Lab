@@ -30,36 +30,36 @@ public class Lab4Main {
             "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files/polinomB5.txt",
     };
 
-    public static int noThreads = 4;
-    public static String resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomBResult.txt";
-    public static String solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomBSolution.txt";
+    public static int noThreads = 1;
+    public static String resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomAResult.txt";
+    public static String solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomASolution.txt";
 
     public static String[] inputFiles;
 
     public static void main(String[] args) {
-        inputFiles = inputFilesB;
+        String caseNumber = "B";
         if (args.length > 0) {
             if (args.length != 2) {
                 System.out.println("Give case number, then number of threads");
                 return;
             }
-            String caseNumber = args[0];
-            switch (caseNumber) {
-                case "A" -> inputFiles = inputFilesA;
-                case "B" -> inputFiles = inputFilesB;
-                default -> {
-                    System.out.println("Wrong case number (should be A or B)");
-                    return;
-                }
-            }
-            resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Result.txt";
-            solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Solution.txt";
+            caseNumber = args[0];
             noThreads = Integer.parseInt(args[1]);
             if (noThreads < 1) {
                 System.out.println("Wrong noThreads");
                 return;
             }
         }
+        switch (caseNumber) {
+            case "A" -> inputFiles = inputFilesA;
+            case "B" -> inputFiles = inputFilesB;
+            default -> {
+                System.out.println("Wrong case number (should be A or B)");
+                return;
+            }
+        }
+        resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Result.txt";
+        solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinom" + caseNumber + "Solution.txt";
         NodeList nodeList = new NodeList();
         long start = System.nanoTime();
         if (noThreads == 1)
@@ -129,7 +129,7 @@ public class Lab4Main {
         try {
             t1.join();
             for (Thread t : threads)
-                    t.join();
+                t.join();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -213,15 +213,14 @@ public class Lab4Main {
 
         public synchronized void add(Node node) {
             Node prev = first;
-            Node crt = first;
+            Node crt = first.next;
             while (crt != last && crt.exp < node.exp) {
                 prev = crt;
                 crt = crt.next;
             }
             if (crt.exp > node.exp) {
-                Node newNode = new Node(node.coef, node.exp);
-                newNode.next = crt;
-                prev.next = newNode;
+                node.next = crt;
+                prev.next = node;
             } else {
                 crt.coef += node.coef;
                 if (crt.coef == 0)
