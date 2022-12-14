@@ -1,0 +1,16 @@
+Caz,Nr threads,Timp executie
+nrPolinoame=10,nrMonoame=50,gr=1000,1,1,22.2945
+nrPolinoame=10,nrMonoame=50,gr=1000,4,2,22.88134
+nrPolinoame=10,nrMonoame=50,gr=1000,4,3,15.25188
+nrPolinoame=10,nrMonoame=50,gr=1000,6,2,18.69223
+nrPolinoame=10,nrMonoame=50,gr=1000,6,3,22.27239
+nrPolinoame=10,nrMonoame=50,gr=1000,8,2,18.68359
+nrPolinoame=10,nrMonoame=50,gr=1000,8,3,18.62818
+
+nrPolinoame=5,nrMonoame=100,gr=10000,1,1,18.26124
+nrPolinoame=5,nrMonoame=100,gr=10000,4,2,24.75948
+nrPolinoame=5,nrMonoame=100,gr=10000,4,3,18.00279
+nrPolinoame=5,nrMonoame=100,gr=10000,6,2,20.84432
+nrPolinoame=5,nrMonoame=100,gr=10000,6,3,24.1603
+nrPolinoame=5,nrMonoame=100,gr=10000,8,2,19.92762
+nrPolinoame=5,nrMonoame=100,gr=10000,8,3,18.099

@@ -30,7 +30,7 @@ public class Lab5Main {
             "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files/polinomB5.txt",
     };
 
-    public static int noThreads = 4;
+    public static int noThreads = 8;
     public static int noReaderThreads = 2;
     public static String resultFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomAResult.txt";
     public static String solutionFile = "C:\\facultate\\Semestrul 5\\PPD\\PPD_LAB\\Lab4\\files\\polinomASolution.txt";
@@ -38,7 +38,7 @@ public class Lab5Main {
     public static String[] inputFiles;
 
     public static void main(String[] args) {
-        String caseNumber = "A";
+        String caseNumber = "B";
         if (args.length > 0) {
             if (args.length != 3) {
                 System.out.println("Give case number, number of threads and number of reader threads");
